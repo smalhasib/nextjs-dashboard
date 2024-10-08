@@ -1,5 +1,12 @@
 import {sql} from '@vercel/postgres';
-import {CustomerField, CustomersTableType, InvoiceForm, InvoicesTable, LatestInvoiceRaw, Revenue,} from './definitions';
+import {
+    CustomerField,
+    CustomersTableType,
+    InvoiceForm,
+    InvoicesTable,
+    LatestInvoiceRaw,
+    Revenue,
+} from './definitions';
 import {formatCurrency} from './utils';
 
 export async function fetchRevenue() {
@@ -7,12 +14,12 @@ export async function fetchRevenue() {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
-    console.log('Fetching revenue data...');
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+      // console.log('Fetching revenue data...');
+      // await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await sql<Revenue>`SELECT * FROM revenue`;
 
-    console.log('Data fetch completed after 3 seconds.');
+      // console.log('Data fetch completed after 3 seconds.');
 
     return data.rows;
   } catch (error) {
@@ -30,10 +37,11 @@ export async function fetchLatestInvoices() {
       ORDER BY invoices.date DESC
       LIMIT 5`;
 
-    return data.rows.map((invoice) => ({
+      const latestInvoices = data.rows.map((invoice) => ({
       ...invoice,
       amount: formatCurrency(invoice.amount),
     }));
+      return latestInvoices;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch the latest invoices.');
@@ -124,7 +132,8 @@ export async function fetchInvoicesPages(query: string) {
       invoices.status ILIKE ${`%${query}%`}
   `;
 
-      return Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+      const totalPages = Math.ceil(Number(count.rows[0].count) / ITEMS_PER_PAGE);
+      return totalPages;
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch total number of invoices.');
@@ -166,7 +175,8 @@ export async function fetchCustomers() {
       ORDER BY name ASC
     `;
 
-      return data.rows;
+      const customers = data.rows;
+      return customers;
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch all customers.');
@@ -193,11 +203,13 @@ export async function fetchFilteredCustomers(query: string) {
 		ORDER BY customers.name ASC
 	  `;
 
-      return data.rows.map((customer) => ({
+      const customers = data.rows.map((customer) => ({
       ...customer,
       total_pending: formatCurrency(customer.total_pending),
       total_paid: formatCurrency(customer.total_paid),
     }));
+
+      return customers;
   } catch (err) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');

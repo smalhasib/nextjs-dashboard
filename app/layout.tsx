@@ -1,6 +1,5 @@
-import {ReactNode} from "react";
-import '@/styles/global.css';
-import {inter} from "@/libs/fonts";
+import '@/app/ui/global.css';
+import {inter} from '@/app/ui/fonts';
 import {Metadata} from 'next';
 
 export const metadata: Metadata = {
@@ -11,9 +10,10 @@ export const metadata: Metadata = {
     description: 'The official Next.js Learn Dashboard built with App Router.',
     metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
 };
-
-export default function RootLayout({children}: {
-    children: ReactNode;
+export default function RootLayout({
+                                       children,
+                                   }: {
+    children: React.ReactNode;
 }) {
     return (
         <html lang="en">
